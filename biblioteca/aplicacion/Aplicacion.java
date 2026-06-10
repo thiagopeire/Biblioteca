@@ -1,5 +1,7 @@
 package biblioteca.aplicacion;
 
+import java.io.IOException;
+
 import biblioteca.datos.CargarParametros;
 import biblioteca.datos.Dato;
 import biblioteca.interfaz.Interfaz;
@@ -7,7 +9,6 @@ import biblioteca.logica.Logica;
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
 import biblioteca.modelo.Socio;
-import java.io.IOException;
 import net.datastructures.LinkedPositionalList;
 import net.datastructures.ProbeHashMap;
 

@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>biblioteca</groupId>
+    <groupId>Biblioteca</groupId>
     <artifactId>mi-proyecto</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -28,9 +28,8 @@
     </dependencies>
 
     <build>
-        <!-- Apuntar a tu estructura actual -->
-        <sourceDirectory>/</sourceDirectory>
-        <testSourceDirectory>/test/</testSourceDirectory>
+        <sourceDirectory>.</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
 
         <plugins>
             <plugin>
@@ -39,6 +38,13 @@
                 <version>3.13.0</version>
                 <configuration>
                     <release>21</release>
+                    <excludes>
+                        <exclude>bin/**</exclude>
+                        <exclude>target/**</exclude>
+                        <exclude>.github/**</exclude>
+                        <exclude>.vscode/**</exclude>
+                        <exclude>test/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 

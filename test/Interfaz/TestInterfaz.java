@@ -1,9 +1,7 @@
 package test.Interfaz;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import biblioteca.interfaz.*;
+import org.junit.jupiter.api.Test;
 
 public class TestInterfaz{
     static Interfaz i = new Interfaz();
@@ -11,5 +9,6 @@ public class TestInterfaz{
     public void mostrarMenu(){
         Integer op = Interfaz.menu();
         Interfaz.mostrarMensaje(op.toString());
+
     }
 }

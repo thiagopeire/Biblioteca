@@ -1,14 +1,12 @@
 package biblioteca.datos;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 
-import net.datastructures.ProbeHashMap;
-import net.datastructures.LinkedPositionalList;
 import biblioteca.modelo.Libro;
-import biblioteca.modelo.Socio;
 import biblioteca.modelo.Prestamo;
+import biblioteca.modelo.Socio;
+import net.datastructures.LinkedPositionalList;
+import net.datastructures.ProbeHashMap;
 
 public class Dato {
 

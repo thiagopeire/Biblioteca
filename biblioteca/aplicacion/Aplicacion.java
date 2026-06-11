@@ -32,8 +32,8 @@ public class Aplicacion {
         try {
             catalogo  = Dato.cargarLibros(CargarParametros.getArchivoLibros());
             socios    = Dato.cargarSocios(CargarParametros.getArchivoSocios());
-            prestamos = Dato.cargarPrestamos(CargarParametros.getArchivoPrestamos(),
-                                             socios, catalogo);
+            prestamos = Dato.cargarPrestamos(CargarParametros.getArchivoPrestamos(), 
+                                                socios, catalogo);
         } catch (Exception e) {
             System.err.println("Error al cargar archivos de datos: " + e.getMessage());
             System.exit(-1);
@@ -50,12 +50,23 @@ public class Aplicacion {
             switch (opcion) {
                 case Constante.OPCION_PRESTAR:
                     // TODO: pedir datos al usuario y llamar a logica.prestar(...)
-                    
+                    Interfaz.mostrarMensaje("Prestar");
+                    String socioPrestar = Interfaz.pedirNroSocio();
+                    String isbnPrestar = Interfaz.pedirIsbn();
 
+                    if (!logica.prestar(socioPrestar, isbnPrestar)){
+                        Interfaz.mostrarError("No se pudo concretar el prestamo.");
+                    }
+                    Interfaz.mostrarMensaje("prestamo cargado correctamente.");
                     break;
 
                 case Constante.OPCION_DEVOLVER:
                     // TODO: pedir datos al usuario y llamar a logica.devolver(...)
+                    Interfaz.mostrarMensaje("Devolver");
+                    String socioDevolver = Interfaz.pedirNroSocio();
+                    String isbnDevolver = Interfaz.pedirIsbn();
+
+                    logica.devolver(socioDevolver, isbnDevolver);
                     break;
 
                 case Constante.OPCION_BUSCAR_ISBN:

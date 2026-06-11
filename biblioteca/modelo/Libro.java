@@ -9,9 +9,13 @@ public class Libro {
     private int anioPublicacion;
     private int ejemplaresDisponibles;
 
-    public Libro(String isbn, String titulo, String autor, String genero,
-                 int anioPublicacion, int ejemplaresDisponibles) {
-        // TODO: inicializar atributos
+    public Libro(String isbn, String titulo, String autor, String genero, int anioPublicacion, int ejemplaresDisponibles) {
+        this.isbn = isbn;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.genero = genero;
+        this.anioPublicacion = anioPublicacion;
+        this.ejemplaresDisponibles = ejemplaresDisponibles;
     }
 
     // TODO: getters y setters

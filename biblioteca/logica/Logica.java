@@ -2,12 +2,15 @@ package biblioteca.logica;
 
 import java.time.LocalDate;
 
-import net.datastructures.ProbeHashMap;
-import net.datastructures.LinkedPositionalList;
-import net.datastructures.LinkedQueue;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.IOException;
+
 import biblioteca.modelo.Libro;
-import biblioteca.modelo.Socio;
 import biblioteca.modelo.Prestamo;
+import biblioteca.modelo.Socio;
+import net.datastructures.LinkedPositionalList;
+import net.datastructures.ProbeHashMap;
 
 public class Logica {
 
@@ -36,8 +39,15 @@ public class Logica {
      * @return true si el préstamo se realizó, false en caso contrario
      */
     public boolean prestar(String nroSocio, String isbn) {
-        // TODO: implementar
-        return false;
+        try (FileWriter fileprestamos = new FileWriter("prestamos1.db", true); 
+        PrintWriter escritor = new PrintWriter(fileprestamos)){
+            
+            escritor.println("nuevo prestamo registrado");
+        } catch (IOException e){
+            System.out.println(e.getMessage());//debug
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -3,7 +3,6 @@ package biblioteca.modelo;
 import java.time.LocalDate;
 
 public class Prestamo {
-
     private Socio     socio;
     private Libro     libro;
     private LocalDate fechaPrestamo;

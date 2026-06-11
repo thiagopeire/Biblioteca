@@ -1,14 +1,17 @@
 package biblioteca.interfaz;
 
+import java.io.InputStream;
+
 import biblioteca.aplicacion.Constante;
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Interfaz {
-    private static final Scanner SC = new Scanner(System.in);
+    private static Scanner SC = new Scanner(System.in);
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
@@ -29,12 +32,18 @@ public class Interfaz {
         System.out.println(Constante.OPCION_VENCIDOS + ". Préstamos vencidos");
         System.out.println(Constante.OPCION_SALIR + ". Salir");
         System.out.print("Ingrese una opción: ");
-
-        int opcion = SC.nextInt();
-        if (opcion < 0 | opcion >= Constante.TOTAL_OPCIONES) {
+        
+        Integer opcion = SC.nextInt();
+        // System.out.println("\nInput: "+opcion.toString()); //debug
+        if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
             mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
+            return -1;
         }
         return opcion;
+    }
+
+    public static void setScanner(InputStream in){
+        SC = new Scanner(in);
     }
 
     public static String pedirIsbn() {

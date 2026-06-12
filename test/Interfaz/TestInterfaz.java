@@ -1,13 +1,15 @@
-//Para correr maven es necesario que el paquete sea: Interfaz
+//Para correr con maven es necesario que el paquete sea: Interfaz
 //De otra manera lo correcto sería dejarlo como: test.Interfaz
-package Interfaz; 
+package test.Interfaz; 
 
 import biblioteca.interfaz.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
 
 public class TestInterfaz{
     @Test
@@ -15,6 +17,7 @@ public class TestInterfaz{
         Interfaz.setScanner(new ByteArrayInputStream("20".getBytes())); //Opcion Invalida 
         Integer op = Interfaz.menu();
         if (op == -1){
+
             return;
         }
         fail("la opcion ingresada ("+ op.toString() +") debio ser rechazada.");
@@ -28,5 +31,21 @@ public class TestInterfaz{
             fail("la opcion ingresada ("+ op.toString() +") debio ser aceptada.");
         }
     }    
+
+    @Test
+    public void pedirFecha_FechaValida(){
+        Interfaz.setScanner(new ByteArrayInputStream("10/10/2000".getBytes()));
+        if (Interfaz.pedirFecha("Fecha de cumpleaños") == null){
+            fail("Valor Esperado: LocalDate. Valor Recibido: null");
+        }
+    }
+
+    @Test
+    public void pedirFecha_FechaInvalida(){
+        Interfaz.setScanner(new ByteArrayInputStream("50/10/2000".getBytes()));
+        if (Interfaz.pedirFecha("Fecha de cumpleaños") != null){
+            fail("Valor Esperado: null. Valor Recibido: LocalDate");
+        }
+    }
 }
 

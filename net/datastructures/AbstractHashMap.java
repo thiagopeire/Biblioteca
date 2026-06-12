@@ -79,7 +79,7 @@ public abstract class AbstractHashMap<K,V> extends AbstractMap<K,V> {
    * @return the associated value, or null if no such entry exists
    */
   @Override
-  public V get(K key) { return bucketGet(hashValue(key), key); }
+  public V get(K key) { return key != null ? bucketGet(hashValue(key), key) : null; }
 
   /**
    * Removes the entry with the specified key, if present, and returns

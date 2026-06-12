@@ -19,16 +19,46 @@ public class Libro {
     }
 
     // TODO: getters y setters
+    public String getIsbn(){
+        return isbn;
+    }
+
+    public String getTitulo(){
+        return this.titulo;
+    }
+
+    public String getAutor(){
+        return this.autor;
+    }
+
+    public Integer getAñoPublicacion(){
+        return this.anioPublicacion;
+    }
+
+    public String getGenero(){
+        return this.genero;
+    }
+
+    public Integer getEjemplaresDisp(){
+        return this.ejemplaresDisponibles;
+    }
+
 
     @Override
     public String toString() {
-        // TODO: implementar
-        return null;
+        return (
+        "\nTitulo:                 " + getTitulo() +
+        "\nAutor:                  " + getAutor() +
+        "\nGenero:                 " + getGenero() +
+        "\nAnio de Publicacion:    " + getAñoPublicacion() +
+        "\nEjemplares Disponibles: " + getEjemplaresDisp());
     }
 
     @Override
     public boolean equals(Object obj) {
-        // TODO: implementar - dos libros son iguales si tienen el mismo ISBN
+        if (obj instanceof Libro libro){
+            return libro.isbn.equals(this.isbn);
+        }
         return false;
     }
 }

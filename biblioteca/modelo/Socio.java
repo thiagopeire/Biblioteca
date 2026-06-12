@@ -10,10 +10,22 @@ public class Socio {
 
     public Socio(String nroSocio, String nombre, String apellido,
                  String email, boolean activo) {
-        // TODO: inicializar atributos
+        this.nroSocio=nroSocio;
+        this.nombre=nombre;
+        this.apellido=apellido;
+        this.email=email;
+        this.activo=activo;
     }
 
     // TODO: getters y setters
+
+    public String getNroSocio(){
+        return nroSocio;
+    }
+
+    public boolean isActive(){
+        return this.activo;
+    }
 
     @Override
     public String toString() {

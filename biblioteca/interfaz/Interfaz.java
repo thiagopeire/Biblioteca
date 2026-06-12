@@ -10,12 +10,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+
 public class Interfaz {
     private static Scanner SC = new Scanner(System.in);
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Muestra el menú principal y retorna la opción elegida por el usuario.
+     * @return De ingresarse una opcion valida la devuelve, en caso contrario -1
      */
     public static int menu() {
         System.out.println("\n===== SISTEMA DE GESTIÓN DE BIBLIOTECA =====");
@@ -35,13 +37,17 @@ public class Interfaz {
         
         Integer opcion = SC.nextInt();
         // System.out.println("\nInput: "+opcion.toString()); //debug
+        mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
         if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
-            mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
             return -1;
         }
         return opcion;
     }
 
+    /**
+     * Usa in como input para el scanner.
+     * @param in entrada de datos
+     */
     public static void setScanner(InputStream in){
         SC = new Scanner(in);
     }
@@ -76,18 +82,28 @@ public class Interfaz {
      * LocalDate. Debe validar el formato antes de retornar.
      */
     public static LocalDate pedirFecha(String etiqueta) {
-        System.out.print("Ingrese " + etiqueta + " (dd/MM/yyyy): ");
-        // TODO: implementar y validar formato usando DateTimeFormatter FMT
+        System.out.print("Ingrese " + etiqueta +"(dd/mm/yyyy): ");
+        try{
+            String fechastr = SC.next();
+            return LocalDate.parse(fechastr, FMT);
+        }catch (Exception e){
+            mostrarError(e.getLocalizedMessage());
+        }
         return null;
     }
-
     // ── Métodos de presentación de resultados ──
     public static void mostrarLibro(Libro libro) {
-        // TODO: implementar
+        // TODO: implementar getters
+        System.out.println("---------------------------------------------------");
+        System.out.println(libro.toString());
+        System.out.println("---------------------------------------------------");
+
     }
 
     public static void mostrarListaLibros(Iterable<Libro> libros) {
-        // TODO: implementar
+        for (Libro libro : libros){
+            mostrarLibro(libro);
+        }
     }
 
     public static void mostrarListaPrestamos(Iterable<Prestamo> prestamos) {

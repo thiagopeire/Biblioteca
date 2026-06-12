@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
@@ -13,9 +13,9 @@ import net.datastructures.LinkedPositionalList;
 import net.datastructures.ProbeHashMap;
 
 public class Logica {
-
     private ProbeHashMap<String, Libro> catalogo;
     private ProbeHashMap<String, Socio> socios;
+    private ProbeHashMap<String,LinkedPositionalList<Prestamo>> prestamosActivos;
     // TODO: definir las estructuras adicionales que necesite
     // Pensar: ¿dónde guardar los préstamos activos?
     // Pensar: ¿cómo modelar la lista de espera por libro?
@@ -26,7 +26,7 @@ public class Logica {
                   ProbeHashMap<String, LinkedPositionalList<Prestamo>> prestamosActivos) {
         this.catalogo = catalogo;
         this.socios   = socios;
-        // TODO: inicializar las estructuras internas a partir de los datos recibidos
+        this.prestamosActivos = prestamosActivos;
     }
 
     // ── INCREMENTO 1 ──────────────────────────────────────────────
@@ -38,16 +38,34 @@ public class Logica {
      * Condiciones: el socio debe estar activo y debe haber ejemplares disponibles.
      * @return true si el préstamo se realizó, false en caso contrario
      */
+     //TODO: insertar el nuevo prestamo en prestamosActivos y persistirlo como un nuevo prestamo en "prestamos.txt"
     public boolean prestar(String nroSocio, String isbn) {
-        try (FileWriter fileprestamos = new FileWriter("prestamos1.db", true); 
+        try (FileWriter fileprestamos = new FileWriter("prestamos1.txt", true); //uso un nuevo archivo por las dudas
         PrintWriter escritor = new PrintWriter(fileprestamos)){
-            
-            escritor.println("nuevo prestamo registrado");
-        } catch (IOException e){
-            System.out.println(e.getMessage());//debug
+            Socio socio = socios.get(nroSocio);
+            if (socio == null || !socio.isActive()){
+                return false;
+            }
+
+            Libro libro = catalogo.get(isbn);
+            if (libro==null || libro.getEjemplaresDisp() == 0){
+                return false;
+            }
+
+            LocalDate fechaPrestamo = LocalDate.now();
+            LocalDate vencimiento = fechaPrestamo.plusDays(14);
+
+            escritor.println(nroSocio+";"+isbn+";"+formatearFecha(fechaPrestamo)+";"+formatearFecha(vencimiento));
+        } catch (Exception e){
+            System.out.println("LOGICA_ERROR: "+e.getLocalizedMessage() + "\nDetalle: "+e.getClass().toGenericString());//debug
             return false;
         }
+       
         return true;
+    }
+
+    private String formatearFecha(LocalDate fecha){
+        return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     /**

@@ -40,7 +40,7 @@ public class Logica {
      */
      //TODO: insertar el nuevo prestamo en prestamosActivos y persistirlo como un nuevo prestamo en "prestamos.txt"
     public boolean prestar(String nroSocio, String isbn) {
-        try (FileWriter fileprestamos = new FileWriter("prestamos1.txt", true); //uso un nuevo archivo por las dudas
+        try (FileWriter fileprestamos = new FileWriter("prestamos.txt", true);
         PrintWriter escritor = new PrintWriter(fileprestamos)){
             Socio socio = socios.get(nroSocio);
             if (socio == null || !socio.isActive()){

@@ -14,6 +14,9 @@ public class Prestamo {
         this.libro=libro; 
         this.fechaPrestamo=fechaPrestamo;
         this.activo=true;
+            // CAMBIO NECESARIO: faltaba asignar fechaVencimiento en el original.
+     // Sin esta línea, estaVencido() lanzaba NullPointerException.
+        this.fechaVencimiento=fechaVencimiento;
     }
 
     // TODO: getters y setters
@@ -39,6 +42,17 @@ public class Prestamo {
     }
 
     /**
+     * Actualiza el estado activo del préstamo.
+     * Se usa en {@link biblioteca.logica.Logica#devolver} para marcarlo
+     * como devuelto al momento de la devolución.
+     *antes o estaba implementado
+     * @param activo false para marcar el préstamo como devuelto
+     */
+    public void setActivo(boolean activo){
+        this.activo = activo;
+    }
+
+    /**
      * Retorna true si el préstamo está activo y la fecha de vencimiento
      * es anterior a la fecha indicada.
      */
@@ -49,6 +63,10 @@ public class Prestamo {
     @Override
     public String toString() {
         // TODO: implementar
-        return null;
+        return "Prestamo { Socio: " + socio.getNroSocio() +
+                " | ISBN: " + libro.getIsbn() +
+                " | Desde: " + fechaPrestamo +
+                " | Vence: " + fechaVencimiento +
+                " | Activo: " + activo + " }";
     }
 }

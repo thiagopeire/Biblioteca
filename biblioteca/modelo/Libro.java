@@ -42,6 +42,16 @@ public class Libro {
     public Integer getEjemplaresDisp(){
         return this.ejemplaresDisponibles;
     }
+/**
+     * Actualiza la cantidad de ejemplares disponibles.
+     * Se usa en {@link biblioteca.logica.Logica#prestar} para decrementar
+     * y en {@link biblioteca.logica.Logica#devolver} para incrementar.
+     *
+     * @param ejemplaresDisponibles nueva cantidad de ejemplares disponibles
+     */
+    public void setEjemplaresDisponibles(int ejemplaresDisponibles){
+        this.ejemplaresDisponibles = ejemplaresDisponibles;
+    }
 
 
     @Override

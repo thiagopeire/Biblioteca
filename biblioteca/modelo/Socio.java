@@ -23,19 +23,51 @@ public class Socio {
         return nroSocio;
     }
 
+      //getter agregados: Nombre, Apellido, Email
+    public String getNombre(){
+        return nombre;
+    }
+
+    public String getApellido(){
+        return apellido;
+    }
+
+    public String getEmail(){
+        return email;
+    }
+    
     public boolean isActive(){
         return this.activo;
     }
 
+    /**
+ * Retorna una representación textual del socio con todos sus datos.
+ * Agregado: implementación del método, antes estaba vacío (TODO).
+ *
+ * @return cadena con los datos del socio
+ */
     @Override
     public String toString() {
         // TODO: implementar
-        return null;
+        return "Socio #" + nroSocio +
+           " | " + nombre + " " + apellido +
+           " | " + email +
+           " | Activo: " + activo;
     }
 
+    /**
+ * Dos socios son iguales si tienen el mismo número de socio.
+ * Agregado: implementación del método, antes estaba vacío (TODO).
+ *
+ * @param obj objeto a comparar
+ * @return true si ambos socios tienen el mismo nroSocio
+ */
     @Override
     public boolean equals(Object obj) {
         // TODO: implementar - dos socios son iguales si tienen el mismo nroSocio
-        return false;
+        if (obj instanceof Socio socio) {
+    		return socio.nroSocio.equals(this.nroSocio);
+    	}
+        return false; 
     }
 }

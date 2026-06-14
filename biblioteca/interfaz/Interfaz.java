@@ -106,8 +106,20 @@ public class Interfaz {
         }
     }
 
+     /**
+     * Muestra la lista de préstamos por pantalla.
+     * Itera sobre los préstamos recibidos y muestra cada uno
+     * usando el método {@link Prestamo#toString()}.
+     *
+     * @param prestamos colección iterable de préstamos a mostrar
+     */
     public static void mostrarListaPrestamos(Iterable<Prestamo> prestamos) {
         // TODO: implementar
+        for (Prestamo prestamo : prestamos) {
+            System.out.println("---------------------------------------------------");
+            System.out.println(prestamo.toString());
+            System.out.println("---------------------------------------------------");
+        }
     }
 
     public static void mostrarMensaje(String mensaje) {

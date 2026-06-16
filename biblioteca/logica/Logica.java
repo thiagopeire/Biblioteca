@@ -3,11 +3,11 @@ package biblioteca.logica;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
 import biblioteca.modelo.Socio;
+import biblioteca.aplicacion.Constante;
 import net.datastructures.LinkedPositionalList;
 import net.datastructures.ProbeHashMap;
 
@@ -37,7 +37,6 @@ public class Logica {
      * Condiciones: el socio debe estar activo y debe haber ejemplares disponibles.
      * @return true si el préstamo se realizó, false en caso contrario
      */
-     //TODO: insertar el nuevo prestamo en prestamosActivos
     public boolean prestar(String nroSocio, String isbn) {
         try (FileWriter filePrestamos = new FileWriter("prestamos.txt", true);
         PrintWriter escritor = new PrintWriter(filePrestamos)){
@@ -54,8 +53,7 @@ public class Logica {
             LocalDate fechaPrestamo = LocalDate.now();
             LocalDate vencimiento = fechaPrestamo.plusDays(14);
 
-            escritor.println(nroSocio+";"+isbn+";"+formatearFecha(fechaPrestamo)+";"+formatearFecha(vencimiento)); 
-            
+            escritor.println(nroSocio+";"+isbn+";"+fechaPrestamo.format(Constante.FMT)+";"+vencimiento.format(Constante.FMT));            
         } catch (Exception e){
             System.out.println("LOGICA_ERROR: "+e.getLocalizedMessage() + "\nDetalle: "+e.getClass().toGenericString());//debug
             return false;
@@ -64,9 +62,6 @@ public class Logica {
         return true;
     }
 
-    private String formatearFecha(LocalDate fecha){
-        return fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    }
 
     /**
      * Registra la devolución de un libro.

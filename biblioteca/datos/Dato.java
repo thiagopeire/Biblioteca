@@ -1,7 +1,12 @@
 package biblioteca.datos;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
 
+import biblioteca.aplicacion.Constante;
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
 import biblioteca.modelo.Socio;
@@ -17,11 +22,31 @@ public class Dato {
      *
      * @return mapa indexado por ISBN
      */
-    public static ProbeHashMap<String, Libro> cargarLibros(String fileName)
-            throws FileNotFoundException {
-
+    public static ProbeHashMap<String, Libro> cargarLibros(String fileName) throws FileNotFoundException {
         ProbeHashMap<String, Libro> libros = new ProbeHashMap<>();
-        // TODO: implementar lectura del archivo y carga del mapa
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(";");
+
+                String isbn = datos[0];
+                String titulo = datos[1];
+                String autor = datos[2];
+                String genero = datos[3];
+                int añoPubli = Integer.parseInt(datos[4]); 
+                int uniDisp  = Integer.parseInt(datos[5]); 
+
+
+                Libro libro = new Libro(isbn, titulo, autor, genero, añoPubli, uniDisp);
+
+                libros.put(isbn, libro);
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+            return null;
+        }
+
         return libros;
     }
 
@@ -32,11 +57,30 @@ public class Dato {
      *
      * @return mapa indexado por nroSocio
      */
-    public static ProbeHashMap<String, Socio> cargarSocios(String fileName)
-            throws FileNotFoundException {
+    public static ProbeHashMap<String, Socio> cargarSocios(String fileName) throws FileNotFoundException {
+        ProbeHashMap<String, Socio> socios = new ProbeHashMap<>();    
+         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String linea;
 
-        ProbeHashMap<String, Socio> socios = new ProbeHashMap<>();
-        // TODO: implementar lectura del archivo y carga del mapa
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(";");
+
+                String nroSocio = datos[0];
+                String nombre = datos[1];
+                String apellido = datos[2];
+                String email = datos[3];
+                boolean activo = Boolean.parseBoolean(datos[4]); 
+
+                Socio socio = new Socio(nroSocio, nombre, apellido, email, activo);
+
+                socios.put(nroSocio, socio);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+            return null;
+        }
+
         return socios;
     }
 
@@ -54,7 +98,37 @@ public class Dato {
             throws FileNotFoundException {
 
         ProbeHashMap<String, LinkedPositionalList<Prestamo>> prestamos = new ProbeHashMap<>();
-        // TODO: implementar lectura del archivo y carga del mapa
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
+            String line;
+            LinkedPositionalList<Prestamo> listPrestamos = new LinkedPositionalList<>();
+
+            while ((line = br.readLine()) != null){
+                String[] datos = line.split(";");
+                
+                String nroSocio = datos[0];
+                String isbn = datos[1];
+                String fechaPrestamostr = datos[2];
+                String fechaVencimientostr = datos[3];
+            
+                LocalDate fp = LocalDate.parse(fechaPrestamostr, Constante.FMT);
+                LocalDate fv = LocalDate.parse(fechaVencimientostr, Constante.FMT);
+
+                if (LocalDate.now().isAfter(fv)){
+                    continue;
+                }
+
+                Prestamo p = new Prestamo(socios.get(nroSocio), libros.get(isbn), fp, fv);
+        
+                listPrestamos.addFirst(p);
+                prestamos.put(nroSocio, listPrestamos);
+                
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+            return null;
+        }
+
         return prestamos;
     }
 }

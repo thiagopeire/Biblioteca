@@ -49,30 +49,31 @@ public class Aplicacion {
 
             switch (opcion) {
                 case Constante.OPCION_PRESTAR:
-                    // TODO: pedir datos al usuario y llamar a logica.prestar(...)
                     Interfaz.mostrarMensaje("Prestar");
                     String socioPrestar = Interfaz.pedirNroSocio();
                     String isbnPrestar = Interfaz.pedirIsbn();
 
                     if (!logica.prestar(socioPrestar, isbnPrestar)){
-                        Interfaz.mostrarError("No se pudo concretar el prestamo.");
+                        Interfaz.mostrarError("No se pudo concretar la operacion.");
+                        return;
                     }
-                    Interfaz.mostrarMensaje("prestamo cargado correctamente.");
+                    Interfaz.mostrarMensaje("Exito.");
                     break;
 
                 case Constante.OPCION_DEVOLVER:
-                    // TODO: pedir datos al usuario y llamar a logica.devolver(...)
                     Interfaz.mostrarMensaje("Devolver");
                     String socioDevolver = Interfaz.pedirNroSocio();
                     String isbnDevolver = Interfaz.pedirIsbn();
 
-                    logica.devolver(socioDevolver, isbnDevolver);
+                    if (!logica.devolver(socioDevolver, isbnDevolver)){
+                        Interfaz.mostrarError("No se pudo concretar la operacion.");
+                        return;
+                    }
+                    Interfaz.mostrarMensaje("Exito.");
                     break;
 
                 case Constante.OPCION_BUSCAR_ISBN:
-                    // TODO: pedir ISBN y mostrar resultado de logica.buscarPorIsbn(...)
-                    // Pide el ISBN al usuario y busca el libro en el catálogo.
-                    // Si no existe muestra un error, si existe lo muestra por pantalla.
+                    Interfaz.mostrarMensaje("Busqueda");
                 	String isbnBuscar = Interfaz.pedirIsbn();
                     Libro libroEncontrado = logica.buscarPorIsbn(isbnBuscar);
                     if (libroEncontrado == null) {
@@ -83,9 +84,6 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_BUSCAR_TITULO:
-                    // TODO: pedir título y mostrar resultados de logica.buscarPorTitulo(...)
-                    // Pide el título al usuario y busca todos los libros que lo contengan.
-                    // La búsqueda no distingue mayúsculas de minúsculas.
                     String titulo = Interfaz.pedirTitulo();
                     LinkedPositionalList<Libro> porTitulo = logica.buscarPorTitulo(titulo);
                     if (porTitulo.isEmpty()) {
@@ -96,9 +94,6 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_BUSCAR_AUTOR:
-                    // TODO: pedir autor y mostrar resultados de logica.buscarPorAutor(...)
-                    // Pide el autor al usuario y busca todos los libros de ese autor.
-                    // La búsqueda no distingue mayúsculas de minúsculas.
                     String autor = Interfaz.pedirAutor();
                     LinkedPositionalList<Libro> porAutor = logica.buscarPorAutor(autor);
                     if (porAutor.isEmpty()) {
@@ -109,8 +104,6 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_DISPONIBLES:
-                    // TODO: mostrar resultado de logica.listarDisponibles()
-                    // Obtiene todos los libros con al menos un ejemplar disponible y los muestra.
                     LinkedPositionalList<Libro> disponibles = logica.listarDisponibles();
                     if (disponibles.isEmpty()) {
                         Interfaz.mostrarMensaje("No hay libros disponibles en este momento.");
@@ -120,8 +113,6 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_PRESTAMOS_SOCIO:
-                    // TODO: pedir nroSocio y mostrar logica.prestamosActivosDeSocio(...)
-                     // Pide el número de socio y muestra todos sus préstamos activos.
                     String socioPrestamos = Interfaz.pedirNroSocio();
                     LinkedPositionalList<Prestamo> activosSocio = logica.prestamosActivosDeSocio(socioPrestamos);
                     if (activosSocio.isEmpty()) {

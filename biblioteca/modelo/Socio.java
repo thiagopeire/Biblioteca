@@ -17,13 +17,11 @@ public class Socio {
         this.activo=activo;
     }
 
-    // TODO: getters y setters
 
     public String getNroSocio(){
         return nroSocio;
     }
 
-      //getter agregados: Nombre, Apellido, Email
     public String getNombre(){
         return nombre;
     }
@@ -35,20 +33,38 @@ public class Socio {
     public String getEmail(){
         return email;
     }
-    
+
     public boolean isActive(){
         return this.activo;
     }
 
+    public void setEmail(String s) {
+        this.email = s;
+    }
+
+    public void setApellido(String s) {
+        this.apellido = s;
+    }
+
+    public void setNombre(String s) {
+        this.nombre = s;
+    }
+
+    public void setNroSocio(String s) {
+        this.nroSocio = s;
+    }
+
+    public void setActivo(boolean a){
+        this.activo = a;
+    }
+
     /**
  * Retorna una representación textual del socio con todos sus datos.
- * Agregado: implementación del método, antes estaba vacío (TODO).
  *
  * @return cadena con los datos del socio
  */
     @Override
     public String toString() {
-        // TODO: implementar
         return "Socio #" + nroSocio +
            " | " + nombre + " " + apellido +
            " | " + email +
@@ -57,14 +73,12 @@ public class Socio {
 
     /**
  * Dos socios son iguales si tienen el mismo número de socio.
- * Agregado: implementación del método, antes estaba vacío (TODO).
  *
  * @param obj objeto a comparar
  * @return true si ambos socios tienen el mismo nroSocio
  */
     @Override
     public boolean equals(Object obj) {
-        // TODO: implementar - dos socios son iguales si tienen el mismo nroSocio
         if (obj instanceof Socio socio) {
     		return socio.nroSocio.equals(this.nroSocio);
     	}

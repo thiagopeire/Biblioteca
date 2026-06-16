@@ -1,19 +1,18 @@
 package biblioteca.interfaz;
 
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 import biblioteca.aplicacion.Constante;
 import biblioteca.modelo.Libro;
 import biblioteca.modelo.Prestamo;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
 
 public class Interfaz {
     private static Scanner SC = new Scanner(System.in);
-    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FMT = Constante.FMT;
 
     /**
      * Muestra el menú principal y retorna la opción elegida por el usuario.
@@ -36,9 +35,9 @@ public class Interfaz {
         System.out.print("Ingrese una opción: ");
         
         Integer opcion = SC.nextInt();
-        // System.out.println("\nInput: "+opcion.toString()); //debug
-        mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
+
         if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
+            mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
             return -1;
         }
         return opcion;
@@ -93,7 +92,6 @@ public class Interfaz {
     }
     // ── Métodos de presentación de resultados ──
     public static void mostrarLibro(Libro libro) {
-        // TODO: implementar getters
         System.out.println("---------------------------------------------------");
         System.out.println(libro.toString());
         System.out.println("---------------------------------------------------");

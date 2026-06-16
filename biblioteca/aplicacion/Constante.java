@@ -1,5 +1,7 @@
 package biblioteca.aplicacion;
 
+import java.time.format.DateTimeFormatter;
+
 public class Constante {
     public static final int OPCION_PRESTAR         = 1;
     public static final int OPCION_DEVOLVER        = 2;
@@ -12,8 +14,9 @@ public class Constante {
     public static final int OPCION_RANKING         = 9;
     public static final int OPCION_VENCIDOS        = 10;
     public static final int OPCION_SALIR           = 0; 
+    public static final int TOTAL_OPCIONES = 11;
 
-    public static final int TOTAL_OPCIONES = 11; //incrementar por cada nueva opcion
+    public static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy"); //esto permite reutilizarlo entre las capas de interfaz y datos.
 }
 
 

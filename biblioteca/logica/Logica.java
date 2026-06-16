@@ -70,6 +70,27 @@ public class Logica {
      */
     public boolean devolver(String nroSocio, String isbn) {
         // TODO: implementar
+        LinkedPositionalList<Prestamo> lista =
+    	            prestamosActivos.get(nroSocio);
+
+    	    if (lista == null) {
+    	        return false;
+    	    }
+
+    	    for (Prestamo p : lista) {
+
+    	        if (p.isActive() && p.getLibro().getIsbn().equals(isbn)) {
+
+    	            p.setActivo(false);
+
+    	            Libro libro = p.getLibro();
+
+    	            libro.setEjemplaresDisponibles(
+    	                    libro.getEjemplaresDisp() + 1);
+
+    	            return true;
+    	        }
+    	    }
         return false;
     }
 
@@ -79,6 +100,11 @@ public class Logica {
      */
     public Libro buscarPorIsbn(String isbn) {
         // TODO: implementar
+         Libro libro = catalogo.get(isbn);
+
+    	    if (libro != null) {
+    	        return libro;
+    	    }
         return null;
     }
 
@@ -87,7 +113,21 @@ public class Logica {
      */
     public LinkedPositionalList<Libro> buscarPorTitulo(String titulo) {
         // TODO: implementar
-        return null;
+         LinkedPositionalList<Libro> resultado =
+    	            new LinkedPositionalList<>();
+
+    	    String buscado = titulo.toLowerCase();
+
+    	    for (Libro libro : catalogo.values()) {
+
+    	        if (libro.getTitulo()
+    	                .toLowerCase()
+    	                .contains(buscado)) {
+
+    	            resultado.addLast(libro);
+    	        }
+    	    }
+        return resultado;
     }
 
     /**
@@ -95,7 +135,21 @@ public class Logica {
      */
     public LinkedPositionalList<Libro> buscarPorAutor(String autor) {
         // TODO: implementar
-        return null;
+        LinkedPositionalList<Libro> resultado =
+                new LinkedPositionalList<>();
+
+        String buscado = autor.toLowerCase();
+
+        for (Libro libro : catalogo.values()) {
+
+            if (libro.getAutor()
+                    .toLowerCase()
+                    .contains(buscado)) {
+
+                resultado.addLast(libro);
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -103,7 +157,16 @@ public class Logica {
      */
     public LinkedPositionalList<Libro> listarDisponibles() {
         // TODO: implementar
-        return null;
+        LinkedPositionalList<Libro> resultado =
+                new LinkedPositionalList<>();
+
+        for (Libro libro : catalogo.values()) {
+
+            if (libro.getEjemplaresDisp() > 0) {
+                resultado.addLast(libro);
+            }
+        }
+        return resultado;
     }
 
     /**
@@ -111,7 +174,23 @@ public class Logica {
      */
     public LinkedPositionalList<Prestamo> prestamosActivosDeSocio(String nroSocio) {
         // TODO: implementar
-        return null;
+        LinkedPositionalList<Prestamo> resultado =
+                new LinkedPositionalList<>();
+
+        LinkedPositionalList<Prestamo> lista =
+                prestamosActivos.get(nroSocio);
+
+        if (lista == null) {
+            return resultado;
+        }
+
+        for (Prestamo p : lista) {
+
+            if (p.isActive()) {
+                resultado.addLast(p);
+            }
+        }
+        return resultado;
     }
 
     // ── INCREMENTO 2 ──────────────────────────────────────────────

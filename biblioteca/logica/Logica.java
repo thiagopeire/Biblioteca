@@ -16,7 +16,7 @@ public class Logica {
     private ProbeHashMap<String, Socio> socios;
     private ProbeHashMap<String,LinkedPositionalList<Prestamo>> prestamosActivos;
     // TODO: definir las estructuras adicionales que necesite
-    // Pensar: ¿dónde guardar los préstamos activos?
+    // Pensar: ¿dónde guardar los préstamos activos? 
     // Pensar: ¿cómo modelar la lista de espera por libro?
     // Pensar: ¿dónde guardar el historial de préstamos por socio?
 
@@ -39,8 +39,8 @@ public class Logica {
      */
      //TODO: insertar el nuevo prestamo en prestamosActivos
     public boolean prestar(String nroSocio, String isbn) {
-        try (FileWriter fileprestamos = new FileWriter("prestamos.txt", true);
-        PrintWriter escritor = new PrintWriter(fileprestamos)){
+        try (FileWriter filePrestamos = new FileWriter("prestamos.txt", true);
+        PrintWriter escritor = new PrintWriter(filePrestamos)){
             Socio socio = socios.get(nroSocio);
             if (socio == null || !socio.isActive()){
                 return false;
@@ -54,10 +54,7 @@ public class Logica {
             LocalDate fechaPrestamo = LocalDate.now();
             LocalDate vencimiento = fechaPrestamo.plusDays(14);
 
-            escritor.println(nroSocio+";"+isbn+";"+formatearFecha(fechaPrestamo)+";"+formatearFecha(vencimiento)); //persiste el nuevo prestamo
-
-
-
+            escritor.println(nroSocio+";"+isbn+";"+formatearFecha(fechaPrestamo)+";"+formatearFecha(vencimiento)); 
             
         } catch (Exception e){
             System.out.println("LOGICA_ERROR: "+e.getLocalizedMessage() + "\nDetalle: "+e.getClass().toGenericString());//debug

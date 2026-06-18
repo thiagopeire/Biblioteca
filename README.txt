@@ -42,15 +42,15 @@ Formato de fechas: dd/mm/aaaa
 TAREAS A IMPLEMENTAR (buscar TODO en el código)
 -----------------------------------------------
 INCREMENTO 1:
-  [ ] Libro.java          -> constructor, getters/setters, toString, equals
-  [ ] Socio.java          -> constructor, getters/setters, toString, equals
-  [ ] Prestamo.java       -> constructor, getters/setters, toString
-  [ ] Dato.java           -> cargarLibros(), cargarSocios(), cargarPrestamos()
-  [ ] Logica.java         -> prestar(), devolver(), buscarPorIsbn(),
+  [x] Libro.java          -> constructor, getters/setters, toString, equals
+  [x] Socio.java          -> constructor, getters/setters, toString, equals
+  [x] Prestamo.java       -> constructor, getters/setters, toString
+  [x] Dato.java           -> cargarLibros(), cargarSocios(), cargarPrestamos()
+  [x] Logica.java         -> prestar(), devolver(), buscarPorIsbn(),
                              buscarPorTitulo(), buscarPorAutor(),
                              listarDisponibles(), prestamosActivosDeSocio()
-  [ ] Interfaz.java       -> menu(), pedirIsbn(), pedirNroSocio(), etc.
-  [ ] Aplicacion.java     -> completar el switch con las opciones del incremento 1
+  [x] Interfaz.java       -> menu(), pedirIsbn(), pedirNroSocio(), etc.
+  [x] Aplicacion.java     -> completar el switch con las opciones del incremento 1
 
 INCREMENTO 2:
   [ ] Logica.java         -> agregarEspera(), asignarSiguienteEnEspera(),

@@ -15,6 +15,11 @@ public class Logica {
     private ProbeHashMap<String, Libro> catalogo;
     private ProbeHashMap<String, Socio> socios;
     private ProbeHashMap<String,LinkedPositionalList<Prestamo>> prestamosActivos;
+    // NUEVO: Cola de espera por ISBN
+private ProbeHashMap<String, LinkedPositionalList<Socio>> listasEspera;
+    
+// NUEVO: Historial completo de préstamos por socio
+private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
     // TODO: definir las estructuras adicionales que necesite
     // Pensar: ¿dónde guardar los préstamos activos? 
     // Pensar: ¿cómo modelar la lista de espera por libro?
@@ -26,6 +31,10 @@ public class Logica {
         this.catalogo = catalogo;
         this.socios   = socios;
         this.prestamosActivos = prestamosActivos;
+        // NUEVO: Inicializa las listas de espera
+    this.listasEspera = new ProbeHashMap<>();
+    // NUEVO: Inicializa el historial de préstamos
+    this.historialPrestamos = new ProbeHashMap<>();
     }
 
     // ── INCREMENTO 1 ──────────────────────────────────────────────
@@ -53,6 +62,46 @@ public class Logica {
             LocalDate fechaPrestamo = LocalDate.now();
             LocalDate vencimiento = fechaPrestamo.plusDays(14);
 
+            // NUEVO: Se crea el objeto Prestamo para poder
+        // almacenarlo en memoria y utilizarlo en los reportes.
+        Prestamo prestamo = new Prestamo(
+                socio,
+                libro,
+                fechaPrestamo,
+                vencimiento
+            );
+
+             // NUEVO: Obtiene la lista de préstamos activos del socio.
+        LinkedPositionalList<Prestamo> activos =
+                prestamosActivos.get(nroSocio);
+
+            // NUEVO: Si el socio todavía no tiene préstamos activos,
+        // se crea una nueva lista.
+        if (activos == null) {
+            activos = new LinkedPositionalList<>();
+            prestamosActivos.put(nroSocio, activos);
+        }
+
+        // NUEVO: Agrega el préstamo a los préstamos activos.
+        activos.addLast(prestamo);
+
+        // NUEVO: Obtiene el historial completo del socio.
+        LinkedPositionalList<Prestamo> historial = historialPrestamos.get(nroSocio);
+
+    // NUEVO: Si el socio no posee historial todavía,
+        // se crea una nueva lista.
+        if (historial == null) {
+            historial = new LinkedPositionalList<>();
+            historialPrestamos.put(nroSocio, historial);
+        }
+
+        // NUEVO: Guarda el préstamo en el historial permanente.
+        historial.addLast(prestamo);
+
+        // NUEVO: Se descuenta un ejemplar disponible porque
+        // el libro acaba de ser prestado.
+        libro.setEjemplaresDisponibles(libro.getEjemplaresDisp() - 1);
+            
             escritor.println(nroSocio+";"+isbn+";"+fechaPrestamo.format(Constante.FMT)+";"+vencimiento.format(Constante.FMT));            
         } catch (Exception e){
             System.out.println("LOGICA_ERROR: "+e.getLocalizedMessage() + "\nDetalle: "+e.getClass().toGenericString());//debug
@@ -200,7 +249,24 @@ public class Logica {
      * Se invoca cuando no hay ejemplares disponibles al momento del pedido.
      */
     public void agregarEspera(String nroSocio, String isbn) {
-        // TODO: implementar
+      // NUEVO: Busca el socio que quiere ingresar a la cola
+    Socio socio = socios.get(nroSocio);
+
+    if (socio == null) {
+        return;
+    }
+
+    // NUEVO: Obtiene la lista de espera asociada al libro
+    LinkedPositionalList<Socio> espera = listasEspera.get(isbn);
+
+    // NUEVO: Si no existe una lista de espera para ese ISBN se crea
+    if (espera == null) {
+        espera = new LinkedPositionalList<>();
+        listasEspera.put(isbn, espera);
+    }
+
+    // NUEVO: Se agrega al final para respetar el orden de llegada
+    espera.addLast(socio);
     }
 
     /**
@@ -208,7 +274,24 @@ public class Logica {
      * automáticamente al primero en la cola y lo notifica.
      */
     public void asignarSiguienteEnEspera(String isbn) {
-        // TODO: implementar
+         // NUEVO: Obtiene la cola de espera del libro
+    LinkedPositionalList<Socio> espera = listasEspera.get(isbn);
+
+    if (espera == null || espera.isEmpty()) {
+        return;
+    }
+
+    // NUEVO: Recupera al primer socio de la cola
+    Socio socio = espera.first().getElement();
+
+    // NUEVO: Lo elimina de la cola porque ya será atendido
+    espera.remove(espera.first());
+
+    // NUEVO: Intenta generar automáticamente el préstamo
+    prestar(socio.getNroSocio(), isbn);
+
+    // NUEVO: Mensaje informativo
+    System.out.println( "Libro asignado automáticamente al socio " + socio.getNroSocio());
     }
 
     /**
@@ -216,8 +299,16 @@ public class Logica {
      * (activos e históricos), en orden cronológico.
      */
     public LinkedPositionalList<Prestamo> historialDeSocio(String nroSocio) {
-        // TODO: implementar
-        return null;
+         // NUEVO: Obtiene el historial almacenado del socio
+    LinkedPositionalList<Prestamo> historial =
+            historialPrestamos.get(nroSocio);
+
+    // NUEVO: Si no existe historial devuelve una lista vacía
+    if (historial == null) {
+        return new LinkedPositionalList<>();
+    }
+
+    return historial;
     }
 
     /**
@@ -225,8 +316,38 @@ public class Logica {
      * @param n cantidad de libros a retornar
      */
     public LinkedPositionalList<Libro> librosMasSolicitados(int n) {
-        // TODO: implementar
-        return null;
+        // NUEVO: Lista que contendrá los resultados
+    LinkedPositionalList<Libro> resultado =
+            new LinkedPositionalList<>();
+
+    // NUEVO: Contador de préstamos por ISBN
+    ProbeHashMap<String,Integer> contador =
+            new ProbeHashMap<>();
+
+    // NUEVO: Recorre todos los historiales registrados
+    for (LinkedPositionalList<Prestamo> lista :
+            historialPrestamos.values()) {
+
+        for (Prestamo p : lista) {
+
+            String isbn = p.getLibro().getIsbn();
+
+            Integer cantidad = contador.get(isbn);
+
+            if (cantidad == null) {
+                contador.put(isbn, 1);
+            } else {
+                contador.put(isbn, cantidad + 1);
+            }
+        }
+    }
+
+    // NUEVO: Agrega los libros encontrados al resultado
+    for (String isbn : contador.keySet()) {
+        resultado.addLast(catalogo.get(isbn));
+    }
+
+    return resultado;
     }
 
     /**
@@ -235,7 +356,23 @@ public class Logica {
      * @param hoy fecha actual
      */
     public LinkedPositionalList<Prestamo> prestamosVencidos(LocalDate hoy) {
-        // TODO: implementar
-        return null;
+        // NUEVO: Lista donde se almacenarán los préstamos vencidos
+    LinkedPositionalList<Prestamo> resultado =
+            new LinkedPositionalList<>();
+
+    // NUEVO: Recorre todos los préstamos activos de todos los socios
+    for (LinkedPositionalList<Prestamo> lista :
+            prestamosActivos.values()) {
+
+        for (Prestamo p : lista) {
+
+            // NUEVO: Utiliza el método estaVencido() de Prestamo
+            if (p.estaVencido(hoy)) {
+                resultado.addLast(p);
+            }
+        }
+    }
+
+    return resultado;
     }
 }

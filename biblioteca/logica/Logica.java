@@ -134,9 +134,10 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
 
     	            Libro libro = p.getLibro();
 
-    	            libro.setEjemplaresDisponibles(
-    	                    libro.getEjemplaresDisp() + 1);
-
+    	            libro.setEjemplaresDisponibles(libro.getEjemplaresDisp() + 1);
+                    // NUEVO: Si existe una cola de espera para este libro,
+                    // se asigna automáticamente al siguiente socio.
+                    asignarSiguienteEnEspera(isbn);
     	            return true;
     	        }
     	    }
@@ -317,21 +318,17 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
      */
     public LinkedPositionalList<Libro> librosMasSolicitados(int n) {
         // NUEVO: Lista que contendrá los resultados
-    LinkedPositionalList<Libro> resultado =
-            new LinkedPositionalList<>();
+    LinkedPositionalList<Libro> resultado = new LinkedPositionalList<>();
 
     // NUEVO: Contador de préstamos por ISBN
-    ProbeHashMap<String,Integer> contador =
-            new ProbeHashMap<>();
+    ProbeHashMap<String,Integer> contador = new ProbeHashMap<>();
 
     // NUEVO: Recorre todos los historiales registrados
-    for (LinkedPositionalList<Prestamo> lista :
-            historialPrestamos.values()) {
+    for (LinkedPositionalList<Prestamo> lista :historialPrestamos.values()) {
 
         for (Prestamo p : lista) {
 
             String isbn = p.getLibro().getIsbn();
-
             Integer cantidad = contador.get(isbn);
 
             if (cantidad == null) {
@@ -372,7 +369,19 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
             }
         }
     }
+        // NUEVO: Limita la cantidad devuelta según el parámetro n
+    int agregados = 0;
 
+    for (String isbn : contador.keySet()) {
+
+        if (agregados >= n) {
+            break;
+        }
+
+        resultado.addLast(catalogo.get(isbn));
+        agregados++;
+    }
+        
     return resultado;
     }
 }

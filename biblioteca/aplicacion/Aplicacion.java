@@ -123,16 +123,57 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_HISTORIAL:
-                    // TODO: pedir nroSocio y mostrar logica.historialDeSocio(...)
+                    // NUEVO: Pide el número de socio al usuario
+                    String socioHistorial = Interfaz.pedirNroSocio();
+
+                    // NUEVO: Obtiene el historial completo de préstamos del socio
+                    LinkedPositionalList<Prestamo> historial = logica.historialDeSocio(socioHistorial);
+
+                    // NUEVO: Si el historial está vacío, informa al usuario
+                    if (historial.isEmpty()) {
+                    Interfaz.mostrarMensaje("El socio no tiene historial de préstamos.");
+                    } else {
+                    // NUEVO: Muestra cada préstamo del historial por pantalla
+                    Interfaz.mostrarListaPrestamos(historial);
+                    }
                     break;
 
                 case Constante.OPCION_RANKING:
-                    // TODO: pedir N y mostrar logica.librosMasSolicitados(N)
+                    // NUEVO: Pide al usuario cuántos libros quiere ver en el ranking
+                    int n = Interfaz.pedirN();
+
+                    // NUEVO: Obtiene la lista de libros más solicitados
+                    LinkedPositionalList<Libro> ranking = logica.librosMasSolicitados(n);
+
+                    // NUEVO: Si no hay datos de préstamos, informa al usuario
+                    if (ranking.isEmpty()) {
+                    Interfaz.mostrarMensaje("No hay datos de préstamos para generar el ranking.");
+                    } else {
+                    // NUEVO: Muestra los libros del ranking por pantalla
+                    Interfaz.mostrarListaLibros(ranking);
+                    }
                     break;
 
                 case Constante.OPCION_VENCIDOS:
-                    // TODO: pedir fecha con Interfaz.pedirFecha(...) y mostrar
-                    //       logica.prestamosVencidos(LocalDate)
+                    // NUEVO: Pide la fecha al usuario para comparar contra los vencimientos
+                    java.time.LocalDate fechaVencidos = Interfaz.pedirFecha("fecha de referencia ");
+
+                    // NUEVO: Si la fecha ingresada no es válida, muestra error y no continúa
+                    if (fechaVencidos == null) {
+                    Interfaz.mostrarError("Fecha inválida, operación cancelada.");
+                    break;
+                    }
+
+                    // NUEVO: Obtiene todos los préstamos vencidos hasta la fecha indicada
+                    LinkedPositionalList<Prestamo> vencidos = logica.prestamosVencidos(fechaVencidos);
+
+                    // NUEVO: Si no hay préstamos vencidos, informa al usuario
+                    if (vencidos.isEmpty()) {
+                    Interfaz.mostrarMensaje("No hay préstamos vencidos a esa fecha.");
+                    } else {
+                    // NUEVO: Muestra cada préstamo vencido por pantalla
+                    Interfaz.mostrarListaPrestamos(vencidos);
+                    }
                     break;
 
                 case Constante.OPCION_SALIR:

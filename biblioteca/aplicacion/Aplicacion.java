@@ -55,7 +55,7 @@ public class Aplicacion {
 
                     if (!logica.prestar(socioPrestar, isbnPrestar)){
                         Interfaz.mostrarError("No se pudo concretar la operacion.");
-                        return;
+                        break;
                     }
                     Interfaz.mostrarMensaje("Exito.");
                     break;
@@ -67,7 +67,7 @@ public class Aplicacion {
 
                     if (!logica.devolver(socioDevolver, isbnDevolver)){
                         Interfaz.mostrarError("No se pudo concretar la operacion.");
-                        return;
+                        break;
                     }
                     Interfaz.mostrarMensaje("Exito.");
                     break;

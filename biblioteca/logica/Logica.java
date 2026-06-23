@@ -368,20 +368,7 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
                 resultado.addLast(p);
             }
         }
-    }
-        // NUEVO: Limita la cantidad devuelta según el parámetro n
-    int agregados = 0;
-
-    for (String isbn : contador.keySet()) {
-
-        if (agregados >= n) {
-            break;
-        }
-
-        resultado.addLast(catalogo.get(isbn));
-        agregados++;
-    }
-        
+    } 
     return resultado;
     }
 }

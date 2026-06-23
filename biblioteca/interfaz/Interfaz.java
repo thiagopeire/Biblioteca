@@ -34,15 +34,19 @@ public class Interfaz {
         System.out.println(Constante.OPCION_SALIR + ". Salir");
         System.out.print("Ingrese una opción: ");
         
-        Integer opcion = SC.nextInt();
-
-        if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
-            mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
+       try {
+            int opcion = SC.nextInt();
+            if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
+                mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
+                return -1;
+            }
+            return opcion;
+        } catch (java.util.InputMismatchException e) {
+            SC.next(); // limpiar el token inválido del buffer
+            mostrarError("Debe ingresar un número.");
             return -1;
         }
-        return opcion;
     }
-
     /**
      * Usa in como input para el scanner.
      * @param in entrada de datos
@@ -53,22 +57,24 @@ public class Interfaz {
 
     public static String pedirIsbn() {
         System.out.print("Ingrese ISBN: ");
-        return SC.next();
+        return SC.nextLine();
     }
 
     public static String pedirNroSocio() {
         System.out.print("Ingrese número de socio: ");
-        return  SC.next();
+        return SC.next();
     }
 
     public static String pedirTitulo() {
         System.out.print("Ingrese título (o parte del título): ");
-        return SC.next();
+        SC.nextLine();
+        return SC.nextLine();
     }
 
     public static String pedirAutor() {
         System.out.print("Ingrese nombre del autor: ");
-        return SC.next();
+        SC.nextLine();
+        return SC.nextLine();
     }
 
     public static int pedirN() {

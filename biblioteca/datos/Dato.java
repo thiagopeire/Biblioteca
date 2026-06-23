@@ -92,43 +92,51 @@ public class Dato {
      * @return mapa indexado por nroSocio con la lista de préstamos de cada socio
      */
     public static ProbeHashMap<String, LinkedPositionalList<Prestamo>> cargarPrestamos(
-            String fileName,
-            ProbeHashMap<String, Socio> socios,
-            ProbeHashMap<String, Libro> libros)
-            throws FileNotFoundException {
+        String fileName,
+        ProbeHashMap<String, Socio> socios,
+        ProbeHashMap<String, Libro> libros)
+        throws FileNotFoundException {
 
-        ProbeHashMap<String, LinkedPositionalList<Prestamo>> prestamos = new ProbeHashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
-            String line;
-            LinkedPositionalList<Prestamo> listPrestamos = new LinkedPositionalList<>();
+    ProbeHashMap<String, LinkedPositionalList<Prestamo>> prestamos = new ProbeHashMap<>();
 
-            while ((line = br.readLine()) != null){
-                String[] datos = line.split(";");
-                
-                String nroSocio = datos[0];
-                String isbn = datos[1];
-                String fechaPrestamostr = datos[2];
-                String fechaVencimientostr = datos[3];
-            
-                LocalDate fp = LocalDate.parse(fechaPrestamostr, Constante.FMT);
-                LocalDate fv = LocalDate.parse(fechaVencimientostr, Constante.FMT);
+    try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        String line;
 
-                if (LocalDate.now().isAfter(fv)){
-                    continue;
-                }
+        while ((line = br.readLine()) != null) {
+            String[] datos = line.split(";");
 
-                Prestamo p = new Prestamo(socios.get(nroSocio), libros.get(isbn), fp, fv);
-        
-                listPrestamos.addFirst(p);
-                prestamos.put(nroSocio, listPrestamos);
-                
+            String nroSocio            = datos[0];
+            String isbn                = datos[1];
+            String fechaPrestamostr    = datos[2];
+            String fechaVencimientostr = datos[3];
+
+            LocalDate fp = LocalDate.parse(fechaPrestamostr, Constante.FMT);
+            LocalDate fv = LocalDate.parse(fechaVencimientostr, Constante.FMT);
+
+            if (LocalDate.now().isAfter(fv)) {
+                continue;
             }
 
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-            return null;
+            Prestamo p = new Prestamo(socios.get(nroSocio), libros.get(isbn), fp, fv);
+
+            // NUEVO: Busca si el socio ya tiene una lista de préstamos cargada
+            LinkedPositionalList<Prestamo> listPrestamos = prestamos.get(nroSocio);
+
+            // NUEVO: Si no tiene, crea una nueva lista y la registra en el mapa
+            if (listPrestamos == null) {
+                listPrestamos = new LinkedPositionalList<>();
+                prestamos.put(nroSocio, listPrestamos);
+            }
+
+            // NUEVO: Agrega el préstamo a la lista del socio correspondiente
+            listPrestamos.addLast(p);
         }
 
-        return prestamos;
+    } catch (IOException e) {
+        System.err.println("Error al leer el archivo: " + e.getMessage());
+        return null;
     }
+
+    return prestamos;
+}
 }

@@ -32,6 +32,7 @@
         <testSourceDirectory>test</testSourceDirectory>
         
         <plugins>
+        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -53,6 +54,24 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.3.1</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.12.0</version> <!-- Revisa por la versión más reciente -->
+
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <!-- Se ejecuta automáticamente en la fase de empaquetado -->
+                        <phase>package</phase> 
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -45,7 +45,7 @@ public class Aplicacion {
         // 4. Ciclo principal de la aplicación
         int opcion;
         do {
-            opcion = Interfaz.menu();
+            try {opcion = Interfaz.menu();} catch(Exception e){Interfaz.mostrarError("Se ingresaron caracteres invalidos\nAbortando...");break;}
 
             switch (opcion) {
                 case Constante.OPCION_PRESTAR:
@@ -131,8 +131,7 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_VENCIDOS:
-                    // TODO: pedir fecha con Interfaz.pedirFecha(...) y mostrar
-                    //       logica.prestamosVencidos(LocalDate)
+                    logica.prestamosVencidos(Interfaz.pedirFecha("fecha de vencimiento"));
                     break;
 
                 case Constante.OPCION_SALIR:

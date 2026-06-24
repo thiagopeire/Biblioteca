@@ -275,25 +275,18 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
      * automáticamente al primero en la cola y lo notifica.
      */
     public void asignarSiguienteEnEspera(String isbn) {
-         // NUEVO: Obtiene la cola de espera del libro
     LinkedPositionalList<Socio> espera = listasEspera.get(isbn);
+    if (espera == null || espera.isEmpty()) return;
 
-    if (espera == null || espera.isEmpty()) {
-        return;
+    net.datastructures.Position<Socio> primero = espera.first();
+    Socio socio = primero.getElement();
+
+    boolean exito = prestar(socio.getNroSocio(), isbn);
+    if (exito) {
+        espera.remove(primero);
+        System.out.println("Libro asignado automáticamente al socio " + socio.getNroSocio());
     }
-
-    // NUEVO: Recupera al primer socio de la cola
-    Socio socio = espera.first().getElement();
-
-    // NUEVO: Lo elimina de la cola porque ya será atendido
-    espera.remove(espera.first());
-
-    // NUEVO: Intenta generar automáticamente el préstamo
-    prestar(socio.getNroSocio(), isbn);
-
-    // NUEVO: Mensaje informativo
-    System.out.println( "Libro asignado automáticamente al socio " + socio.getNroSocio());
-    }
+}
 
     /**
      * Retorna el historial completo de préstamos de un socio
@@ -316,37 +309,34 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
      * Retorna los N libros más solicitados (préstamos activos + históricos).
      * @param n cantidad de libros a retornar
      */
-    public LinkedPositionalList<Libro> librosMasSolicitados(int n) {
-        // NUEVO: Lista que contendrá los resultados
+   public LinkedPositionalList<Libro> librosMasSolicitados(int n) {
     LinkedPositionalList<Libro> resultado = new LinkedPositionalList<>();
+    ProbeHashMap<String, Integer> contador = new ProbeHashMap<>();
 
-    // NUEVO: Contador de préstamos por ISBN
-    ProbeHashMap<String,Integer> contador = new ProbeHashMap<>();
-
-    // NUEVO: Recorre todos los historiales registrados
-    for (LinkedPositionalList<Prestamo> lista :historialPrestamos.values()) {
-
+    for (LinkedPositionalList<Prestamo> lista : historialPrestamos.values()) {
         for (Prestamo p : lista) {
-
             String isbn = p.getLibro().getIsbn();
             Integer cantidad = contador.get(isbn);
-
-            if (cantidad == null) {
-                contador.put(isbn, 1);
-            } else {
-                contador.put(isbn, cantidad + 1);
-            }
+            contador.put(isbn, cantidad == null ? 1 : cantidad + 1);
         }
     }
 
-    // NUEVO: Agrega los libros encontrados al resultado
+    HeapPriorityQueue<Integer, String> heap = new HeapPriorityQueue<>();
     for (String isbn : contador.keySet()) {
-        resultado.addLast(catalogo.get(isbn));
+        heap.insert(-contador.get(isbn), isbn);
     }
 
+    int agregados = 0;
+    while (!heap.isEmpty() && agregados < n) {
+        String isbn = heap.removeMin().getValue();
+        Libro libro = catalogo.get(isbn);
+        if (libro != null) {
+            resultado.addLast(libro);
+            agregados++;
+        }
+    }
     return resultado;
-    }
-
+}
     /**
      * Retorna todos los préstamos cuya fecha de vencimiento expiró
      * y que aún no fueron devueltos.
@@ -354,12 +344,10 @@ private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
      */
     public LinkedPositionalList<Prestamo> prestamosVencidos(LocalDate hoy) {
         // NUEVO: Lista donde se almacenarán los préstamos vencidos
-    LinkedPositionalList<Prestamo> resultado =
-            new LinkedPositionalList<>();
+    LinkedPositionalList<Prestamo> resultado = new LinkedPositionalList<>();
 
     // NUEVO: Recorre todos los préstamos activos de todos los socios
-    for (LinkedPositionalList<Prestamo> lista :
-            prestamosActivos.values()) {
+    for (LinkedPositionalList<Prestamo> lista :prestamosActivos.values()) {
 
         for (Prestamo p : lista) {
 

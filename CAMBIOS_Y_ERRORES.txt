@@ -1,0 +1,220 @@
+=====================================================
+  REGISTRO DE CAMBIOS Y ERRORES ENCONTRADOS
+  Fecha: 23/06/2026
+=====================================================
+
+RESULTADO FINAL: 37 tests, 0 failures, 0 errors - BUILD SUCCESS
+
+=====================================================
+  ERRORES ENCONTRADOS
+=====================================================
+
+--- ERROR 1: Error de compilacion en TestLogica.java (linea 74) ---
+  Archivo: test/Logica/TestLogica.java
+  Error: Codigo basura en la linea 74:
+    }new Prestamo(s, l, LocalDate.now(), LocalDate.now().plusDays(14)
+  Causa: Parentesis sin cerrar y variables s/l fuera de ambito (scope).
+         Era codigo incompleto que nunca debio quedarse en el archivo.
+  Impacto: Impedia compilar TODO el proyecto (1 error de compilacion).
+  Solucion: Eliminar la linea de codigo basura.
+
+--- ERROR 2: NullPointerException en librosMasSolicitados_Exito ---
+  Archivo: test/Logica/TestLogica.java
+  Error: logica.librosMasSolicitados(2) se llamaba ANTES de setVariables(),
+         por lo que la variable 'logica' era null.
+  Causa: Orden incorrecto de instrucciones en el test.
+  Impacto: NullPointerException al ejecutar el test.
+  Solucion: Mover setVariables() antes de usar logica. Ademas, cambiar
+            librosMasSolicitados(2) por librosMasSolicitados(1) porque
+            solo hay 1 libro en el catalogo de prueba, y n=2 causaria
+            IndexOutOfBoundsException.
+
+--- ERROR 3: ArrayIndexOutOfBoundsException en TestCargarPrestamos ---
+  Archivo: biblioteca/datos/Dato.java, linea 109
+  Error: "Index 1 out of bounds for length 1" al leer prestamos.txt
+  Causa: El archivo prestamos.txt contiene lineas en blanco (lineas 9,
+         11, 13). Cuando se hace split(";") sobre una linea vacia,
+         el resultado es un array de longitud 1, y acceder a datos[1]
+         lanza ArrayIndexOutOfBoundsException.
+  Impacto: TestCargarPrestamos fallaba con error.
+  Solucion: Agregar verificacion if (linea.isBlank()) { continue; } en
+            cargarPrestamos(). Se agrego tambien en cargarLibros() y
+            cargarSocios() por consistencia y robustez.
+
+--- ERROR 4: TestCargarSocios no validaba correctamente ---
+  Archivo: test/Datos/TestDatos.java
+  Error: El test iteraba sobre 'libros.entrySet()' (vacio) en vez de
+         'socios.entrySet()'. Ademas, creaba una variable local
+         'socios' que sombreaba el campo de la clase.
+  Causa: Copy-paste sin corregir. La variable local socios nunca se
+         usaba (se creaba y descartaba).
+  Impacto: El test no validaba que los socios se cargaran correctamente.
+  Solucion: Eliminar variable local, iterar sobre socios.entrySet().
+
+--- ERROR 5: TestCargarPrestamos no cargaba datos previos ---
+  Archivo: test/Datos/TestDatos.java
+  Error: TestCargarPrestamos llamaba Dato.cargarPrestamos() con
+         socios y libros vacios (los campos no estaban inicializados
+         porque los tests son independientes y no comparten estado).
+  Causa: Los @Test son independientes. TestCargarLibros y
+         TestCargarSocios cargan los datos en sus campos locales,
+         pero TestCargarPrestamos usa los campos de la clase que
+         siguen vacios.
+  Impacto: Los prestamos se creaban con socio=null y libro=null.
+  Solucion: Agregar @BeforeEach que cargue libros y socios antes
+            de cada test.
+
+--- ERROR 6: cargarPrestamos reutilizaba la misma lista para todos ---
+  Archivo: biblioteca/datos/Dato.java
+  Error: listaPrestamos se creaba FUERA del while, asi que todos los
+         prestamos (de todos los socios) terminaban en la misma lista.
+  Causa: Variable declarada antes del bucle en vez de dentro.
+  Impacto: Todos los socios compartian la misma lista de prestamos.
+  Solucion: Mover la creacion de listaPrestamos dentro del while,
+            creando una nueva lista por cada socio.
+
+--- ERROR 7: Opciones 8, 9, 10 sin implementar ---
+  Archivo: biblioteca/aplicacion/Aplicacion.java
+  Error: Los case 8, 9, 10 tenian solo // TODO vacios, sin output.
+  Causa: Codigo nunca implementado.
+  Impacto: Seleccionar estas opciones no mostraba ningun resultado.
+  Solucion: Implementar cada opcion: pedir datos, llamar a logica,
+            mostrar resultado con Interfaz.mostrarLista*.
+
+--- ERROR 8: Opcion 5 abortaba con nombres con espacios ---
+  Archivo: biblioteca/interfaz/Interfaz.java
+  Error: pedirAutor() y pedirTitulo() usaban SC.next() que solo lee
+         hasta el primer espacio. "Jorge Luis Borges" se cortaba en
+         "Jorge" y el resto causaba InputMismatchException.
+  Causa: SC.next() no acepta espacios.
+  Impacto: Cualquier nombre/titulo con espacios causaba error.
+  Solucion: Cambiar a SC.nextLine() en pedirAutor() y pedirTitulo().
+            Agregar SC.nextLine() en menu() despues de SC.nextInt()
+            para consumir el salto de linea residual.
+
+--- ERROR 9: Opcion 8 no mostraba historial del archivo ---
+  Archivo: biblioteca/logica/Logica.java
+  Error: historialPrestamos se inicializaba vacio y solo se llenaba
+         con prestar(). Los prestamos de prestamos.txt nunca se
+         copiaban al historial.
+  Causa: El constructor no copiaba los datos cargados al historial.
+  Impacto: historialDeSocio() devolvia lista vacia para socios que
+           tenian prestamos en el archivo.
+  Solucion: En el constructor de Logica, copiar todos los prestamos
+            de prestamosActivos a historialPrestamos.
+
+--- ERROR 10: Opcion 10 no mostraba prestamos vencidos ---
+  Archivo: biblioteca/datos/Dato.java
+  Error: cargarPrestamos() marcaba como activo=false los prestamos
+         cuya vencimiento ya habia pasado. Despues estaVencido()
+         verificaba estaActivo() && isBefore(hoy), pero como ya
+         eran inactivos, nunca se consideraban vencidos.
+  Causa: Logica incorrecta: un prestamo vencido SIN DEVOLVER sigue
+         siendo "activo" hasta que alguien lo devuelva.
+  Impacto: prestamosVencidos() siempre devolvia lista vacia.
+  Solucion: Eliminar el setActivo(false) en cargarPrestamos. Solo
+            devolver() debe marcar un prestamo como inactivo.
+
+--- ERROR 11: Tests de Interfaz fallaban con nextLine() ---
+  Archivo: test/Interfaz/TestInterfaz.java
+  Error: Los tests usaban ByteArrayInputStream("20") y ("1") sin \n.
+         Al agregar SC.nextLine() en menu(), el scanner no encontraba
+         linea y lanzaba NoSuchElementException.
+  Causa: La entrada de prueba no tenia salto de linea al final.
+  Impacto: 2 tests de Interfaz fallaban.
+  Solucion: Cambiar "20" a "20\n" y "1" a "1\n" en los tests.
+
+--- BUG: librosMasSolicitados() ordenaba al reves ---
+  Archivo: biblioteca/logica/Logica.java
+  Error: sorted ascendente (a-b) retornaba los MENOS solicitados.
+         Tambien explotaba con IndexOutOfBoundsException si n > size.
+  Causa: Comparador al reves y sin limite para el array.
+  Solucion: Cambiar a sort descendente (b-a) y usar
+            Math.min(n, prestamos.size()) como limite.
+
+=====================================================
+  CAMBIOS REALIZADOS
+=====================================================
+
+1. biblioteca/datos/Dato.java
+   - Agregada verificacion if (linea.isBlank()) { continue; } en los
+     metodos cargarLibros(), cargarSocios() y cargarPrestamos()
+   - Renombradas variables en ingles a espanol:
+     * fileName -> nombreArchivo
+     * line -> linea
+     * listPrestamos -> listaPrestamos
+   - Movida creacion de listaPrestamos dentro del while (una por socio)
+   - Eliminado setActivo(false) para prestamos vencidos al cargar
+
+2. biblioteca/modelo/Socio.java
+   - Renombrado isActive() -> estaActivo()
+
+3. biblioteca/modelo/Prestamo.java
+   - Renombrado isActive() -> estaActivo()
+
+4. biblioteca/interfaz/Interfaz.java
+   - Renombrado setScanner() -> definirScanner()
+   - pedirTitulo() y pedirAutor() cambian de SC.next() a SC.nextLine()
+   - Agregado SC.nextLine() en menu() despues de SC.nextInt()
+
+5. biblioteca/logica/Logica.java
+   - Actualizadas llamadas isActive() -> estaActivo()
+   - Constructor copia prestamosActivos a historialPrestamos
+   - librosMasSolicitados: sort descendente (b-a) con Math.min como limite
+
+6. biblioteca/aplicacion/Aplicacion.java
+   - Implementadas opciones 8 (historial), 9 (ranking), 10 (vencidos)
+
+7. test/Logica/TestLogica.java
+   - Reescrito completo con 30 tests cubriendo las 10 opciones del menu
+
+8. test/Datos/TestDatos.java
+   - Agregado @BeforeEach setup() que carga libros y socios
+   - Corregidas iteraciones sobre la coleccion correcta
+
+9. test/Interfaz/TestInterfaz.java
+   - Actualizada llamada setScanner -> definirScanner
+   - Agregado \n a las entradas de prueba de menu
+
+=====================================================
+  TESTS (37 en total)
+=====================================================
+
+OPCION 1 - PRESTAR (6 tests):
+  prestar_Exito, prestar_Fallo_NoEjemDisp, prestar_Fallo_SocioInactivo,
+  prestar_Fallo_SocioNoExiste, prestar_Fallo_LibroNoExiste,
+  prestar_VerificarDescuentoEjemplares
+
+OPCION 2 - DEVOLVER (5 tests):
+  devolver_Exito, devolver_VerificarRestaEjemplares,
+  devolver_VerificarEstadoPrestamo, devolver_Fallo_SocioSinPrestamos,
+  devolver_Fallo_LibroNoPrestado
+
+OPCION 3 - BUSCAR POR ISBN (2 tests):
+  buscarPorIsbn_Exito, buscarPorIsbn_NoEncontrado
+
+OPCION 4 - BUSCAR POR TITULO (3 tests):
+  buscarPorTitulo_Exito, buscarPorTitulo_CasoInsensitive,
+  buscarPorTitulo_NoEncontrado
+
+OPCION 5 - BUSCAR POR AUTOR (3 tests):
+  buscarPorAutor_Exito, buscarPorAutor_CasoInsensitive,
+  buscarPorAutor_NoEncontrado
+
+OPCION 6 - LISTAR DISPONIBLES (2 tests):
+  listarDisponibles_ConDisponibles, listarDisponibles_SinDisponibles
+
+OPCION 7 - PRESTAMOS ACTIVOS DE SOCIO (3 tests):
+  prestamosActivosDeSocio_ConPrestamos, prestamosActivosDeSocio_SinPrestamos,
+  prestamosActivosDeSocio_SocioNoExiste
+
+OPCION 8 - HISTORIAL DE SOCIO (2 tests):
+  historialDeSocio_ConHistorial, historialDeSocio_SinHistorial
+
+OPCION 9 - LIBROS MAS SOLICITADOS (2 tests):
+  librosMasSolicitados_Exito, librosMasSolicitados_SinHistorial
+
+OPCION 10 - PRESTAMOS VENCIDOS (2 tests):
+  prestamosVencidos_ConVencidos, prestamosVencidos_SinVencidos
+
+=====================================================

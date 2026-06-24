@@ -34,7 +34,7 @@ public class Socio {
         return email;
     }
 
-    public boolean isActive(){
+    public boolean estaActivo(){
         return this.activo;
     }
 

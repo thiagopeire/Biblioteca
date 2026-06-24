@@ -55,11 +55,11 @@ public class Aplicacion {
 
                     if (!logica.prestar(socioPrestar, isbnPrestar)){
                         Interfaz.mostrarError("No se pudo concretar la operacion.");
-                        return;
+                    }else{
+                        Interfaz.mostrarMensaje("Exito.");
                     }
-                    Interfaz.mostrarMensaje("Exito.");
                     break;
-
+                
                 case Constante.OPCION_DEVOLVER:
                     Interfaz.mostrarMensaje("Devolver");
                     String socioDevolver = Interfaz.pedirNroSocio();
@@ -67,9 +67,9 @@ public class Aplicacion {
 
                     if (!logica.devolver(socioDevolver, isbnDevolver)){
                         Interfaz.mostrarError("No se pudo concretar la operacion.");
-                        return;
+                    }else{
+                        Interfaz.mostrarMensaje("Exito.");
                     }
-                    Interfaz.mostrarMensaje("Exito.");
                     break;
 
                 case Constante.OPCION_BUSCAR_ISBN:
@@ -123,15 +123,32 @@ public class Aplicacion {
                     break;
 
                 case Constante.OPCION_HISTORIAL:
-                    // TODO: pedir nroSocio y mostrar logica.historialDeSocio(...)
+                    String socioHistorial = Interfaz.pedirNroSocio();
+                    LinkedPositionalList<Prestamo> historial = logica.historialDeSocio(socioHistorial);
+                    if (historial.isEmpty()) {
+                        Interfaz.mostrarMensaje("El socio no tiene historial de prestamos.");
+                    } else {
+                        Interfaz.mostrarListaPrestamos(historial);
+                    }
                     break;
 
                 case Constante.OPCION_RANKING:
-                    // TODO: pedir N y mostrar logica.librosMasSolicitados(N)
+                    int n = Interfaz.pedirN();
+                    LinkedPositionalList<Libro> ranking = logica.librosMasSolicitados(n);
+                    if (ranking.isEmpty()) {
+                        Interfaz.mostrarMensaje("No hay datos de prestamos para generar el ranking.");
+                    } else {
+                        Interfaz.mostrarListaLibros(ranking);
+                    }
                     break;
 
                 case Constante.OPCION_VENCIDOS:
-                    logica.prestamosVencidos(Interfaz.pedirFecha("fecha de vencimiento"));
+                    LinkedPositionalList<Prestamo> vencidos = logica.prestamosVencidos(Interfaz.pedirFecha("fecha de vencimiento"));
+                    if (vencidos.isEmpty()) {
+                        Interfaz.mostrarMensaje("No hay prestamos vencidos.");
+                    } else {
+                        Interfaz.mostrarListaPrestamos(vencidos);
+                    }
                     break;
 
                 case Constante.OPCION_SALIR:

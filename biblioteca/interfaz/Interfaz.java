@@ -35,6 +35,7 @@ public class Interfaz {
         System.out.print("Ingrese una opción: ");
         
         Integer opcion = SC.nextInt();
+        SC.nextLine();
 
         if (opcion < 0 || opcion >= Constante.TOTAL_OPCIONES) {
             mostrarError("El valor ingresado no se encuentra entre las opciones disponibles.");
@@ -47,7 +48,7 @@ public class Interfaz {
      * Usa in como input para el scanner.
      * @param in entrada de datos
      */
-    public static void setScanner(InputStream in){
+    public static void definirScanner(InputStream in){
         SC = new Scanner(in);
     }
 
@@ -63,12 +64,12 @@ public class Interfaz {
 
     public static String pedirTitulo() {
         System.out.print("Ingrese título (o parte del título): ");
-        return SC.next();
+        return SC.nextLine();
     }
 
     public static String pedirAutor() {
         System.out.print("Ingrese nombre del autor: ");
-        return SC.next();
+        return SC.nextLine();
     }
 
     public static int pedirN() {

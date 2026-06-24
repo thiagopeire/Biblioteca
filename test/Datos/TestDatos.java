@@ -20,12 +20,14 @@ public class TestDatos {
     String PrestamosPath = "prestamos.txt";
     String sociosPath = "socios.txt";
 
+    @BeforeEach
+    public void setup() throws FileNotFoundException {
+        this.libros = Dato.cargarLibros(this.librosPath);
+        this.socios = Dato.cargarSocios(this.sociosPath);
+    }
+
     @Test
     public void TestCargarLibros(){
-        
-        try {this.libros = Dato.cargarLibros(this.librosPath);}
-        catch(FileNotFoundException e){fail("Fallo la carga de archivos: "+ e.getLocalizedMessage());}
-        
         for (Entry<String, Libro> elem : libros.entrySet()) {
             System.out.println(elem.getValue().toString());
         }
@@ -33,11 +35,7 @@ public class TestDatos {
 
     @Test
     public void TestCargarSocios(){
-        ProbeHashMap<String, Socio> socios = new ProbeHashMap<>();    
-        try {this.socios = Dato.cargarSocios(this.sociosPath);}
-        catch(FileNotFoundException e){fail("Fallo la carga de archivos: "+ e.getLocalizedMessage());}
-        
-        for (Entry<String, Libro> elem : libros.entrySet()) {
+        for (Entry<String, Socio> elem : socios.entrySet()) {
             System.out.println(elem.getValue().toString());
         }
     }
@@ -47,8 +45,10 @@ public class TestDatos {
         try {this.prestamos = Dato.cargarPrestamos(this.PrestamosPath, socios, libros);}
         catch(FileNotFoundException e){fail("Fallo la carga de archivos: "+ e.getLocalizedMessage());}
         
-        for (Entry<String, Libro> elem : libros.entrySet()) {
-            System.out.println(elem.getValue().toString());
+        for (Entry<String, LinkedPositionalList<Prestamo>> elem : prestamos.entrySet()) {
+            for (Prestamo p : elem.getValue()) {
+                System.out.println(p.toString());
+            }
         }
     }
 

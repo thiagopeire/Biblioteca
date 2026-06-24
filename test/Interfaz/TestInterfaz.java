@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class TestInterfaz{
     @Test
     public void mostrarMenu_OpcionInvalida(){
-        Interfaz.setScanner(new ByteArrayInputStream("20".getBytes())); //Opcion Invalida 
+        Interfaz.definirScanner(new ByteArrayInputStream("20\n".getBytes())); //Opcion Invalida 
         Integer op = Interfaz.menu();
         if (op == -1){
 
@@ -25,7 +25,7 @@ public class TestInterfaz{
 
     @Test
     public void mostrarMenu_OpcionValida(){
-        Interfaz.setScanner(new ByteArrayInputStream("1".getBytes())); //Opcion PRESTAR
+        Interfaz.definirScanner(new ByteArrayInputStream("1\n".getBytes())); //Opcion PRESTAR
         Integer op = Interfaz.menu();
         if (op == -1){
             fail("la opcion ingresada ("+ op.toString() +") debio ser aceptada.");
@@ -34,7 +34,7 @@ public class TestInterfaz{
 
     @Test
     public void pedirFecha_FechaValida(){
-        Interfaz.setScanner(new ByteArrayInputStream("10/10/2000".getBytes()));
+        Interfaz.definirScanner(new ByteArrayInputStream("10/10/2000".getBytes()));
         if (Interfaz.pedirFecha("Fecha de cumpleaños") == null){
             fail("Valor Esperado: LocalDate. Valor Recibido: null");
         }
@@ -42,7 +42,7 @@ public class TestInterfaz{
 
     @Test
     public void pedirFecha_FechaInvalida(){
-        Interfaz.setScanner(new ByteArrayInputStream("50/10/2000".getBytes()));
+        Interfaz.definirScanner(new ByteArrayInputStream("50/10/2000".getBytes()));
         if (Interfaz.pedirFecha("Fecha de cumpleaños") != null){
             fail("Valor Esperado: null. Valor Recibido: LocalDate");
         }

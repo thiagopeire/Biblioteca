@@ -35,10 +35,17 @@ public class Logica {
         this.catalogo = catalogo;
         this.socios   = socios;
         this.prestamosActivos = prestamosActivos;
-        // NUEVO: Inicializa las listas de espera
         this.listasEspera = new ProbeHashMap<>();
-        // NUEVO: Inicializa el historial de préstamos
         this.historialPrestamos = new ProbeHashMap<>();
+
+        for (String nroSocio : prestamosActivos.keySet()) {
+            LinkedPositionalList<Prestamo> lista = prestamosActivos.get(nroSocio);
+            LinkedPositionalList<Prestamo> historial = new LinkedPositionalList<>();
+            for (Prestamo p : lista) {
+                historial.addLast(p);
+            }
+            this.historialPrestamos.put(nroSocio, historial);
+        }
     }
 
     // ── INCREMENTO 1 ──────────────────────────────────────────────
@@ -54,7 +61,7 @@ public class Logica {
         try (FileWriter filePrestamos = new FileWriter("prestamos.txt", true);
         PrintWriter escritor = new PrintWriter(filePrestamos)){
             Socio socio = socios.get(nroSocio);
-            if (socio == null || !socio.isActive()){
+            if (socio == null || !socio.estaActivo()){
                 return false;
             }
 
@@ -127,7 +134,7 @@ public class Logica {
         if (lista == null) { return false; }
 
         for (Prestamo p : lista) {
-            if (p.isActive() && p.getLibro().getIsbn().equals(isbn)) {
+            if (p.estaActivo() && p.getLibro().getIsbn().equals(isbn)) {
 
                 p.setActivo(false);
 
@@ -223,7 +230,7 @@ public class Logica {
         if (lista == null) { return resultado; }
 
         for (Prestamo p : lista) {
-            if (p.isActive()) {
+            if (p.estaActivo()) {
                 resultado.addLast(p);
             }
         }
@@ -320,9 +327,10 @@ public class Logica {
 
         for (Entry<Libro, Integer> e : solicitudesPorLibro.entrySet()){ prestamos.add(e); }
 
-        prestamos.sort((a,b) -> a.getValue() - b.getValue());
+        prestamos.sort((a,b) -> b.getValue() - a.getValue());
 
-        for (int i=0; i<n;i++){ resultado.addLast(prestamos.get(i).getKey()); }
+        int limite = Math.min(n, prestamos.size());
+        for (int i=0; i<limite;i++){ resultado.addLast(prestamos.get(i).getKey()); }
 
         return resultado;
     }

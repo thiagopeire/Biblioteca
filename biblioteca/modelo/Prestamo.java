@@ -33,7 +33,7 @@ public class Prestamo {
         return this.fechaVencimiento;
     }
 
-    public boolean isActive(){
+    public boolean estaActivo(){
         return this.activo;
     }
 
@@ -52,7 +52,7 @@ public class Prestamo {
      * es anterior a la fecha indicada.
      */
     public boolean estaVencido(LocalDate hoy) {
-        return isActive() && this.fechaVencimiento.isBefore(hoy);
+        return estaActivo() && this.fechaVencimiento.isBefore(hoy);
     }
 
     @Override

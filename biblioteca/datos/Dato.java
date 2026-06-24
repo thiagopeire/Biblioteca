@@ -22,12 +22,13 @@ public class Dato {
      *
      * @return mapa indexado por ISBN
      */
-    public static ProbeHashMap<String, Libro> cargarLibros(String fileName) throws FileNotFoundException {
+    public static ProbeHashMap<String, Libro> cargarLibros(String nombreArchivo) throws FileNotFoundException {
         ProbeHashMap<String, Libro> libros = new ProbeHashMap<>();
         
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             String linea;
             while ((linea = br.readLine()) != null) {
+                if (linea.isBlank()) { continue; }
                 String[] datos = linea.split(";");
 
                 String isbn = datos[0];
@@ -57,12 +58,13 @@ public class Dato {
      *
      * @return mapa indexado por nroSocio
      */
-    public static ProbeHashMap<String, Socio> cargarSocios(String fileName) throws FileNotFoundException {
+    public static ProbeHashMap<String, Socio> cargarSocios(String nombreArchivo) throws FileNotFoundException {
         ProbeHashMap<String, Socio> socios = new ProbeHashMap<>();    
-         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+         try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             String linea;
 
             while ((linea = br.readLine()) != null) {
+                if (linea.isBlank()) { continue; }
                 String[] datos = linea.split(";");
 
                 String nroSocio = datos[0];
@@ -92,18 +94,18 @@ public class Dato {
      * @return mapa indexado por nroSocio con la lista de préstamos de cada socio
      */
     public static ProbeHashMap<String, LinkedPositionalList<Prestamo>> cargarPrestamos(
-            String fileName,
+            String nombreArchivo,
             ProbeHashMap<String, Socio> socios,
             ProbeHashMap<String, Libro> libros)
             throws FileNotFoundException {
 
         ProbeHashMap<String, LinkedPositionalList<Prestamo>> prestamos = new ProbeHashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))){
-            String line;
-            LinkedPositionalList<Prestamo> listPrestamos = new LinkedPositionalList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))){
+            String linea;
 
-            while ((line = br.readLine()) != null){
-                String[] datos = line.split(";");
+            while ((linea = br.readLine()) != null){
+                if (linea.isBlank()) { continue; }
+                String[] datos = linea.split(";");
                 
                 String nroSocio = datos[0];
                 String isbn = datos[1];
@@ -113,14 +115,14 @@ public class Dato {
                 LocalDate fp = LocalDate.parse(fechaPrestamostr, Constante.FMT);
                 LocalDate fv = LocalDate.parse(fechaVencimientostr, Constante.FMT);
 
-                if (LocalDate.now().isAfter(fv)){
-                    continue;
-                }
-
                 Prestamo p = new Prestamo(socios.get(nroSocio), libros.get(isbn), fp, fv);
-        
-                listPrestamos.addFirst(p);
-                prestamos.put(nroSocio, listPrestamos);
+
+                LinkedPositionalList<Prestamo> listaPrestamos = prestamos.get(nroSocio);
+                if (listaPrestamos == null) {
+                    listaPrestamos = new LinkedPositionalList<>();
+                }
+                listaPrestamos.addFirst(p);
+                prestamos.put(nroSocio, listaPrestamos);
                 
             }
 

@@ -18,16 +18,9 @@ public class Logica {
     private ProbeHashMap<String, Socio> socios;
     private ProbeHashMap<String,LinkedPositionalList<Prestamo>> prestamosActivos;
 
-    // NUEVO: Cola de espera por ISBN
-    private ProbeHashMap<String, LinkedPositionalList<Socio>> listasEspera;
+    private ProbeHashMap<String, LinkedPositionalList<Socio>> listasEspera; //por isbn
 
-    // NUEVO: Historial completo de préstamos por socio
-    private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos;
-    
-    // TODO: definir las estructuras adicionales que necesite
-    // Pensar: ¿dónde guardar los préstamos activos? 
-    // Pensar: ¿cómo modelar la lista de espera por libro?
-    // Pensar: ¿dónde guardar el historial de préstamos por socio?
+    private ProbeHashMap<String, LinkedPositionalList<Prestamo>> historialPrestamos; //por nroSocio
 
     public Logica(ProbeHashMap<String, Libro> catalogo,
                   ProbeHashMap<String, Socio> socios,
@@ -128,7 +121,6 @@ public class Logica {
      * @return true si la devolución se realizó, false en caso contrario
      */
     public boolean devolver(String nroSocio, String isbn) {
-        // TODO: implementar
         LinkedPositionalList<Prestamo> lista = prestamosActivos.get(nroSocio);
 
         if (lista == null) { return false; }
@@ -141,8 +133,7 @@ public class Logica {
                 Libro libro = p.getLibro();
 
                 libro.setEjemplaresDisponibles(libro.getEjemplaresDisp() + 1);
-                // NUEVO: Si existe una cola de espera para este libro,
-                // se asigna automáticamente al siguiente socio.
+                
                 asignarSiguienteEnEspera(isbn);
 
                 return true;
@@ -266,7 +257,7 @@ public class Logica {
      * Al devolver un libro, si hay socios en espera, asigna el ejemplar
      * automáticamente al primero en la cola y lo notifica.
      */
-    public void asignarSiguienteEnEspera(String isbn) {
+    private void asignarSiguienteEnEspera(String isbn) {
         // NUEVO: Obtiene la cola de espera del libro
         LinkedPositionalList<Socio> espera = listasEspera.get(isbn);
 
@@ -279,10 +270,15 @@ public class Logica {
         espera.remove(espera.first());
 
         // NUEVO: Intenta generar automáticamente el préstamo
-        prestar(socio.getNroSocio(), isbn);
+        boolean exito = prestar(socio.getNroSocio(), isbn);
 
+        if (!exito){
+            System.out.println( "No se ha podido concretar la asignacion del libro");
+        }
+        
         // NUEVO: Mensaje informativo
         System.out.println( "Libro asignado automáticamente al socio " + socio.getNroSocio());
+
     }
 
     /**
@@ -309,8 +305,8 @@ public class Logica {
 
         ProbeHashMap<Libro,Integer> solicitudesPorLibro = new ProbeHashMap<>(); 
 
-        for (LinkedPositionalList<Prestamo> prestamos :historialPrestamos.values()) {
-            for (Prestamo prestamo : prestamos) {
+        for (LinkedPositionalList<Prestamo> TotalprestamosDeSocio :historialPrestamos.values()) {
+            for (Prestamo prestamo : TotalprestamosDeSocio) {
                 Libro libro = prestamo.getLibro();
                 Integer cantidad = solicitudesPorLibro.get(libro);
         
@@ -327,7 +323,7 @@ public class Logica {
 
         for (Entry<Libro, Integer> e : solicitudesPorLibro.entrySet()){ prestamos.add(e); }
 
-        prestamos.sort((a,b) -> b.getValue() - a.getValue());
+        prestamos.sort((a,b) -> b.getValue() - a.getValue()); //decreciente (b-a)
 
         int limite = Math.min(n, prestamos.size());
         for (int i=0; i<limite;i++){ resultado.addLast(prestamos.get(i).getKey()); }
@@ -341,6 +337,7 @@ public class Logica {
      * @param hoy fecha actual
      */
     public LinkedPositionalList<Prestamo> prestamosVencidos(LocalDate hoy) {
+    if (hoy == null) { return new LinkedPositionalList<>(); }
         LinkedPositionalList<Prestamo> resultado = new LinkedPositionalList<>();
 
         for (LinkedPositionalList<Prestamo> listarActivos : prestamosActivos.values()) {
